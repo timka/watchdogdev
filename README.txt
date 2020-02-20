@@ -12,14 +12,9 @@ Linux watchdog device API for Python
 Installation
 ============
 
-    The module can be installed using standard distutils setup script:
+    The module can be installed using standard setuptools script:
 
         python setup.py install
-
-    Alternatively, it is possible to install the module using setuptools:
-
-        python setup_egg.py install
-
 
 Usage
 =====
