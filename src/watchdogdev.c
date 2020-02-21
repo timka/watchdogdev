@@ -35,6 +35,14 @@ PyDoc_STRVAR(watchdog_doc, (
 "by the module."));
 
 /*
+ *   Helper macros for version compatibility
+ */
+#if PY_MAJOR_VERSION >= 3
+    #define PyInt_FromLong PyLong_FromLong
+    #define PyString_FromString PyUnicode_FromString
+#endif
+
+/*
  *   Helper macros for methods
  */
 #define METH(meth) watchdog_ ## meth
@@ -257,8 +265,7 @@ static PyMethodDef watchdog_methods[] = {
 
 /* Watchodg type defintion */
 static PyTypeObject WatchdogType = {
-        PyObject_HEAD_INIT(NULL)
-        0,                             /*ob_size*/
+        PyVarObject_HEAD_INIT(NULL, 0) /*ob_size*/
         "watchdogdev.watchdog",        /*tp_name*/
         sizeof(watchdogobject),        /*tp_basicsize*/
         0,                             /*tp_itemsize*/
@@ -471,14 +478,33 @@ GETTER_PROTO(get_identity) {
 
 #define ADD_INT_CONSTANT(m, name) PyModule_AddIntConstant(m, #name, name)
 
-PyMODINIT_FUNC initwatchdogdev(void) {
-    PyObject *m = Py_InitModule3("watchdogdev", module_functions, module_doc);
+#if PY_MAJOR_VERSION >= 3
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "watchdogdev",       /* m_name */
+        module_doc,          /* m_doc */
+        -1,                  /* m_size */
+        module_functions,    /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+#endif
+
+static PyObject* moduleinit(void) {
+    #if PY_MAJOR_VERSION >= 3
+        PyObject *m = PyModule_Create(&moduledef);
+    #else
+        PyObject *m = Py_InitModule3("watchdogdev", module_functions, module_doc);
+    #endif
+
     if (m == NULL) {
-        return;
+        return NULL;
     }
 
     if (PyType_Ready(&WatchdogType) < 0) {
-        return;
+        return NULL;
     }
 
     Py_INCREF(&WatchdogType);
@@ -514,4 +540,18 @@ PyMODINIT_FUNC initwatchdogdev(void) {
     ADD_INT_CONSTANT(m, WDIOS_DISABLECARD);
     ADD_INT_CONSTANT(m, WDIOS_ENABLECARD);
     ADD_INT_CONSTANT(m, WDIOS_TEMPPANIC);
+
+    return m;
 };
+
+#if PY_MAJOR_VERSION < 3
+    PyMODINIT_FUNC initwatchdogdev(void)
+    {
+        moduleinit();
+    }
+#else
+    PyMODINIT_FUNC PyInit_watchdogdev(void)
+    {
+        return moduleinit();
+    }
+#endif
