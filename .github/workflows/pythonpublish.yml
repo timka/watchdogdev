@@ -28,3 +28,4 @@ jobs:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         twine upload wheelhouse/*-manylinux*.whl
+        twine upload dist/*.tar.gz
