@@ -39,7 +39,7 @@ Topic :: System :: Operating System Kernels :: Linux
 watchdogdev = Extension('watchdogdev', sources=['src/watchdogdev.c'])
 
 setup(name='watchdogdev',
-      version='0.11',
+      version='1.0.0',
       author='Timur Izhbulatov',
       author_email='timochka@gmail.com',
       description='Implementation of Linux watchdog device API',
