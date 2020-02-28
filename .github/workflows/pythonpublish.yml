@@ -22,10 +22,14 @@ jobs:
       with:
         package-path: ''
         pip-wheel-args: '--no-deps'
+    - name: Build sdist package
+      run: |
+        python setup.py sdist
     - name: Publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        twine upload --skip-existing wheelhouse/*-manylinux*.whl
         twine upload --skip-existing dist/*.tar.gz
+        twine upload --skip-existing wheelhouse/*-manylinux*.whl
+
