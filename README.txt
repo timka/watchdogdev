@@ -20,7 +20,7 @@ Usage
 =====
 
     Make sure your watchdog driver is loaded and /dev/watchdog exists and is
-    writeable. If you don't have a watchdog card, you can load the softdog
+    writable. If you don't have a watchdog card, you can load the softdog
     driver which implements software watchdog timer:
 
         # modprobe softdog
